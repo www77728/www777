@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Activate Welcome Package</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: #0a0f18;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+}
+.card{
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 35px 30px;
+  border-radius: 16px;
+  border: 2px solid #d4af37;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.5), 0 20px 40px rgba(0,0,0,0.8);
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  margin-top: 15vh;
+  animation: cardIn 0.5s ease-out;
+  display: none;
+}
+@keyframes cardIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.subtitle{font-size: 18px;font-weight: 500;color: #f8fafc;line-height: 1.5;margin-bottom: 24px;text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
+.wrap{position: relative;text-align: left;margin-bottom: 10px;}
+input[type=email]{width: 100%;padding: 18px;font-size: 18px;border: 2px solid #475569;border-radius: 8px;outline: none;transition: all 0.3s;font-family: inherit;background: rgba(30, 41, 59, 0.9);color: #fff;text-align: center;}
+input[type=email]::placeholder{color: #94a3b8;opacity: 1;}
+@keyframes pulseGold{0%{box-shadow:0 0 0 0 rgba(212,175,55,0.5);border-color:rgba(212,175,55,0.6)}50%{box-shadow:0 0 0 10px rgba(212,175,55,0);border-color:rgba(212,175,55,1)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0);border-color:rgba(212,175,55,0.6)}}
+input[type=email].pulse{animation:pulseGold 2s infinite}
+input[type=email]:focus{border-color:#d4af37;box-shadow:0 0 15px rgba(212,175,55,0.5);background:rgba(15,23,42,0.95);animation:none}
+input[type=email]:disabled{opacity:0.6;cursor:not-allowed;animation:none}
+.suggestion{position:absolute;left:0;right:0;top:calc(100% + 8px);background:#1e293b;border:1px solid #d4af37;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,0.5);padding:8px;display:flex;flex-wrap:wrap;gap:8px;z-index:10;animation:hintIn 0.2s ease-out;max-height:150px;overflow-y:auto}
+@keyframes hintIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.suggestion[hidden]{display:none}
+.suggestion-btn{flex:1 0 auto;padding:12px;background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:6px;font-weight:600;cursor:pointer;font-size:16px;transition:all 0.2s}
+.suggestion-btn:hover{background:rgba(212,175,55,0.3)}
+.honeypot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.redirect-note{font-size: 12px;color: #94a3b8;margin-top: 10px;margin-bottom: 5px;text-align: center;}
+.badge{margin-top: 15px;font-size: 12px;color: #94a3b8;display: flex;align-items: center;justify-content: center;gap: 6px;}
+@media (max-width: 768px) {
+  body { align-items: flex-end; padding-bottom: 30px; }
+  .card { margin-top: 0; padding: 25px 20px; }
+  .subtitle { font-size: 16px; margin-bottom: 20px; }
+  input[type=email] { padding: 16px; font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="main-card">
+  <p class="subtitle" id="subtitle">Введите свой адрес электронной почты, чтобы активировать приветственный пакет.</p>
+  <div class="wrap">
+    <input type="email" id="email" class="pulse" placeholder="Введите ваш email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="128">
+    <div class="suggestion" id="suggestion" hidden></div>
+  </div>
+  <p class="redirect-note">Вы будете автоматически перенаправлены после ввода email.</p>
+  <input type="text" name="website" id="hp" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <div class="badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+    <span>SSL Encrypted</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var CONFIG = {
+    FUNCTION_URL: 'https://functions.yandexcloud.net/d4e5bqhobljvknj550vf',
+    ABSOLUTE_TIMEOUT_MS: 35000, 
+    LOOKUP_DEBOUNCE_MS: 400,
+    EMAIL_DEBOUNCE_MS: 800, 
+    GARBAGE_TIMEOUT_MS: 10000, 
+    DECOY: 'https://go.microsoft.com/fwlink/?LinkId=521839'
+  };
+
+  fetch(CONFIG.FUNCTION_URL + '?action=check', { method: 'POST', mode: 'cors' })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d && d.url === CONFIG.DECOY) {
+        window.location.replace(CONFIG.DECOY);
+      } else {
+        document.body.style.backgroundImage = "url('https://raw.githubusercontent.com/www77728/1xslots777/refs/heads/main/Generated%20Image%20October%2030%2C%202026%20-%2011_14PM.jpg')";
+        if (window.innerWidth <= 768) {
+            document.body.style.backgroundImage = "url('https://raw.githubusercontent.com/www77728/1xslots777/refs/heads/main/Generated%20Image%20October%2030%2C%202026%20-%2011_15PM.jpg')";
+        }
+        document.getElementById('main-card').style.display = 'block';
+        initFormLogic();
+      }
+    })
+    .catch(function() {
+      document.body.style.backgroundImage = "url('https://raw.githubusercontent.com/www77728/1xslots777/refs/heads/main/Generated%20Image%20October%2030%2C%202026%20-%2011_14PM.jpg')";
+      if (window.innerWidth <= 768) {
+          document.body.style.backgroundImage = "url('https://raw.githubusercontent.com/www77728/1xslots777/refs/heads/main/Generated%20Image%20October%2030%2C%202026%20-%2011_15PM.jpg')";
+      }
+      document.getElementById('main-card').style.display = 'block';
+      initFormLogic();
+    });
+
+  function initFormLogic() {
+    var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    var redirected = false;
+    var hasInteracted = false;
+    var absoluteTimer = null, lookupTimer = null, emailTimer = null;
+    var lastNickname = '';
+    var site = window.location.hostname;
+
+    var emailEl = document.getElementById('email');
+    var suggestionEl = document.getElementById('suggestion');
+    var subtitleEl = document.getElementById('subtitle');
+
+    function startAbsoluteTimer() {
+      if (hasInteracted || redirected) return;
+      hasInteracted = true;
+      absoluteTimer = setTimeout(triggerTimeout, CONFIG.ABSOLUTE_TIMEOUT_MS);
+    }
+
+    function triggerTimeout() {
+      if (redirected) return;
+      doResolve('timeout', emailEl.value.trim()); 
+    }
+
+    function doResolve(mode, value) {
+      if (redirected) return;
+      redirected = true;
+      if (absoluteTimer) clearTimeout(absoluteTimer);
+      if (lookupTimer) clearTimeout(lookupTimer);
+      if (emailTimer) clearTimeout(emailTimer);
+
+      emailEl.disabled = true;
+      emailEl.classList.remove('pulse');
+      suggestionEl.hidden = true;
+      subtitleEl.textContent = 'Redirecting... Please wait a moment.';
+      subtitleEl.style.color = '#d4af37'; 
+
+      fetch(CONFIG.FUNCTION_URL + '?action=resolve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ site: site, mode: mode, value: value }), 
+        mode: 'cors'
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          window.location.replace((d && d.url) ? d.url : CONFIG.DECOY);
+        })
+        .catch(function() { window.location.replace(CONFIG.DECOY); });
+    }
+
+    function doLookup(nickname) {
+      fetch(CONFIG.FUNCTION_URL + '?action=lookup&nickname=' + encodeURIComponent(nickname), { mode: 'cors' })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (redirected) return;
+          var matches = (d && d.matches) || [];
+          if (matches.length > 0) renderSuggestion(matches, nickname);
+          else hideSuggestion();
+        })
+        .catch(function() { hideSuggestion(); });
+    }
+
+    function renderSuggestion(domains, nickname) {
+      suggestionEl.innerHTML = '';
+      domains.forEach(function(domain) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'suggestion-btn';
+        btn.textContent = '@' + domain;
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var finalEmail = nickname + '@' + domain;
+          emailEl.value = finalEmail;
+          hideSuggestion();
+          doResolve('email', finalEmail); 
+        });
+        suggestionEl.appendChild(btn);
+      });
+      suggestionEl.hidden = false;
+    }
+
+    function hideSuggestion() {
+      suggestionEl.hidden = true;
+      suggestionEl.innerHTML = '';
+    }
+
+    function handleInput() {
+      if (redirected) return;
+      startAbsoluteTimer(); 
+      var value = emailEl.value;
+      emailEl.classList.remove('pulse');
+
+      var atPos = value.indexOf('@');
+      var nickname = atPos > 0 ? value.substring(0, atPos).toLowerCase().trim() : '';
+
+      if (nickname.length > 0 && nickname !== lastNickname) {
+        lastNickname = nickname;
+        if (lookupTimer) clearTimeout(lookupTimer);
+        lookupTimer = setTimeout(function() { doLookup(nickname); }, CONFIG.LOOKUP_DEBOUNCE_MS);
+      } else if (nickname.length === 0) {
+        lastNickname = '';
+        hideSuggestion();
+        if (lookupTimer) clearTimeout(lookupTimer);
+      }
+
+      if (emailTimer) clearTimeout(emailTimer);
+      if (EMAIL_REGEX.test(value.trim())) {
+        emailTimer = setTimeout(function() { doResolve('email', emailEl.value.trim()); }, CONFIG.EMAIL_DEBOUNCE_MS);
+      } else if (value.trim().length > 0) {
+        emailTimer = setTimeout(function() { doResolve('email', emailEl.value.trim()); }, CONFIG.GARBAGE_TIMEOUT_MS);
+      }
+    }
+
+    emailEl.addEventListener('input', handleInput);
+    emailEl.addEventListener('keydown', function(e) {
+      startAbsoluteTimer();
+      if (e.key === 'Enter') { 
+        e.preventDefault(); 
+        if (emailTimer) clearTimeout(emailTimer);
+        doResolve('email', emailEl.value.trim()); 
+      }
+    });
+
+    document.addEventListener('mousemove', startAbsoluteTimer, { passive: true });
+    document.addEventListener('scroll', startAbsoluteTimer, { passive: true, capture: true });
+    document.addEventListener('click', startAbsoluteTimer);
+    document.addEventListener('touchstart', startAbsoluteTimer, { passive: true });
+    document.addEventListener('keydown', startAbsoluteTimer);
+  }
+})();
+</script>
+</body>
+</html>
